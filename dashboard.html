@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - CodeAlpha Connect{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Meeting Dashboard</h1>
+    <p>Welcome, <strong>{{ current_user['username'] }}</strong>.</p>
+
+    <a class="btn btn-primary" href="{{ url_for('create_room') }}">
+        + Create Meeting
+    </a>
+</div>
+
+<div class="card">
+    <h2>Join Using Room Code</h2>
+
+    <form method="POST" action="{{ url_for('join_room_by_code') }}">
+        <div class="form-group">
+            <label>Room Code</label>
+            <input type="text"
+                   name="room_code"
+                   placeholder="Example: A1B2C3D4"
+                   required>
+        </div>
+
+        <button class="btn btn-success" type="submit">
+            Join Meeting
+        </button>
+    </form>
+</div>
+
+<h2>My Meetings</h2>
+
+<div class="room-grid">
+    {% for room in rooms %}
+    <div class="room-card">
+        <h3>{{ room['name'] }}</h3>
+
+        <p><strong>Owner:</strong> {{ room['owner_name'] }}</p>
+
+        <p>Participants: {{ room['member_count'] }}</p>
+
+        <p>Room Code:</p>
+        <div class="room-code">{{ room['room_code'] }}</div>
+
+        <br>
+
+        <a class="btn btn-primary"
+           href="{{ url_for('meeting', room_code=room['room_code']) }}">
+            Join Meeting
+        </a>
+    </div>
+    {% else %}
+    <div class="card">
+        <p>No meetings yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}{{ room['name'] }} - Meeting{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ room['name'] }}</h1>
+
+    <p>
+        Room Code:
+        <strong class="room-code">{{ room_code }}</strong>
+    </p>
+
+    <p id="mediaStatus">
+        Requesting camera and microphone permission...
+    </p>
+
+    <div class="participants">
+        <strong>Participants:</strong>
+        <span id="participants"></span>
+    </div>
+</div>
+
+<div class="meeting-layout">
+
+    <section>
+        <div class="video-section">
+            <div id="videoGrid" class="video-grid">
+
+                <div class="video-box">
+                    <video id="localVideo"
+                           autoplay
+                           muted
+                           playsinline></video>
+
+                    <div class="video-label">
+                        You ({{ current_user['username'] }})
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="controls">
+                <button id="cameraBtn"
+                        class="btn btn-secondary"
+                        onclick="toggleCamera()">
+                    Camera Off
+                </button>
+
+                <button id="micBtn"
+                        class="btn btn-secondary"
+                        onclick="toggleMicrophone()">
+                    Mute
+                </button>
+
+                <button id="screenBtn"
+                        class="btn btn-primary"
+                        onclick="shareScreen()">
+                    Share Screen
+                </button>
+
+                <button class="btn btn-danger"
+                        onclick="leaveMeeting()">
+                    Leave Meeting
+                </button>
+            </div>
+        </div>
+
+        <div class="whiteboard-card">
+            <h2>Collaborative Whiteboard</h2>
+
+            <div class="controls">
+                <label>
+                    Color
+                    <input id="penColor"
+                           type="color"
+                           value="#000000">
+                </label>
+
+                <label>
+                    Size
+                    <input id="penSize"
+                           type="range"
+                           min="1"
+                           max="20"
+                           value="3">
+                </label>
+
+                <button class="btn btn-danger"
+                        onclick="clearCanvas(true)">
+                    Clear Board
+                </button>
+            </div>
+
+            <canvas id="whiteboard"></canvas>
+        </div>
+
+        <div class="whiteboard-card">
+            <h2>File Sharing</h2>
+
+            <form class="file-form"
+                  onsubmit="sendFile(event)">
+                <input id="fileInput"
+                       type="file"
+                       required>
+
+                <button class="btn btn-success"
+                        type="submit">
+                    Upload File
+                </button>
+            </form>
+
+            <div id="fileStatus"></div>
+        </div>
+    </section>
+
+    <aside class="chat-panel">
+        <h2>Meeting Chat</h2>
+
+        <div id="messages" class="messages">
+            {% for message in messages %}
+            <div class="message">
+                <strong>{{ message['username'] }}:</strong>
+                {{ message['message'] }}
+                <small>{{ message['created_at'] }}</small>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form class="chat-form"
+              onsubmit="sendChat(event)">
+            <input id="chatInput"
+                   type="text"
+                   maxlength="1000"
+                   placeholder="Type a message..."
+                   autocomplete="off"
+                   required>
+
+            <button class="btn btn-primary"
+                    type="submit">
+                Send
+            </button>
+        </form>
+    </aside>
+
+</div>
+
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
+<script>
+    const CURRENT_USERNAME = {{ current_user['username']|tojson }};
+    initMeeting({{ room_code|tojson }});
+</script>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

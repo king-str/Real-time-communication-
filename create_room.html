@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Create Meeting - CodeAlpha Connect{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card">
+        <h1>Create Meeting Room</h1>
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Meeting Name</label>
+                <input type="text"
+                       name="name"
+                       placeholder="Example: Project Team Meeting"
+                       maxlength="100"
+                       required>
+            </div>
+
+            <button class="btn btn-primary" type="submit">
+                Create Meeting
+            </button>
+
+            <a class="btn btn-light"
+               href="{{ url_for('dashboard') }}">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}
